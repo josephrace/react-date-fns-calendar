@@ -1,47 +1,64 @@
 import React from 'react';
 import {
-  subMonths,
-  addMonths,
-  startOfWeek,
   addDays,
-  format as formatDate,
-  startOfMonth,
+  addMonths,
   endOfMonth,
   endOfWeek,
+  format as formatDate,
   isSameDay,
-  isToday,
   isSameMonth,
+  isToday,
+  startOfWeek,
+  startOfMonth,
+  subMonths,
 } from 'date-fns';
 import './Calendar.css';
 
-class Calendar extends React.Component {
+type Event = {
+  date: Date,
+  name: string
+};
+
+type Props = {
+  events: Event[],
+  options: {
+    weekStartsOn: number
+  }
+};
+
+type State = {
+  currentMonth: Date,
+  selectedDate: Date
+};
+
+class Calendar extends React.Component<Props, State> {
   state = {
     currentMonth: new Date(),
     selectedDate: new Date(),
   };
 
-  handleSelectDate = date => {
+  handleSelectDate = (date: Date) => {
     this.setState({
       selectedDate: date,
     });
   };
 
-  handleSelectMonth = date => {
+  handleSelectMonth = (date: Date) => {
     this.setState({
       currentMonth: date,
     });
   };
 
   handlePrevMonth = () => {
-    this.setState({
-      currentMonth: subMonths(this.state.currentMonth, 1),
-    });
+    this.setState(state => ({
+      currentMonth: subMonths(state.currentMonth, 1),
+    }));
   };
 
   handleNextMonth = () => {
-    this.setState({
-      currentMonth: addMonths(this.state.currentMonth, 1),
-    });
+    this.setState(state => ({
+      currentMonth: addMonths(state.currentMonth, 1),
+    }));
   };
 
   renderHeader() {
@@ -64,8 +81,9 @@ class Calendar extends React.Component {
   }
 
   renderDays() {
+    const { options } = this.props;
     const weekStart = startOfWeek(this.state.currentMonth, {
-      weekStartsOn: this.props.weekStartsOn,
+      weekStartsOn: options.weekStartsOn,
     });
     const days = [];
 
@@ -81,19 +99,22 @@ class Calendar extends React.Component {
   }
 
   renderCells() {
+    const { options } = this.props;
     const monthStart = startOfMonth(this.state.currentMonth);
     const monthEnd = endOfMonth(this.state.currentMonth);
     const dateStart = startOfWeek(monthStart, {
-      weekStartsOn: this.props.weekStartsOn,
+      weekStartsOn: options.weekStartsOn,
     });
     const dateEnd = endOfWeek(monthEnd, {
-      weekStartsOn: this.props.weekStartsOn,
+      weekStartsOn: options.weekStartsOn,
     });
     const dates = [];
+
     let date = dateStart;
 
     while (date <= dateEnd) {
       const thisDate = date;
+
       let classes = 'calendar-cell';
 
       if (isSameDay(date, this.state.selectedDate)) {
@@ -111,7 +132,7 @@ class Calendar extends React.Component {
       dates.push(
         <div
           className={classes}
-          key={date}
+          key={formatDate(date, 'x')}
           onClick={() =>
             isSameMonth(thisDate, this.state.currentMonth) &&
             this.handleSelectDate(thisDate)
@@ -122,6 +143,8 @@ class Calendar extends React.Component {
             if (isSameDay(date, event.date)) {
               return <div className="calendar-event">{event.name}</div>;
             }
+
+            return null;
           })}
         </div>
       );

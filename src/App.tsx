@@ -9,7 +9,7 @@ function App() {
     { date: addDays(new Date(), 1), name: 'Wow calendar' },
   ];
 
-  return <Calendar weekStartsOn={1} events={events} />;
+  return <Calendar options={{ weekStartsOn: 1 }} events={events} />;
 }
 
 export default App;
