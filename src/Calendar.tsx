@@ -15,20 +15,20 @@ import {
 import './Calendar.css';
 
 type Event = {
-  date: Date,
-  name: string
+  date: Date;
+  name: string;
 };
 
 type Props = {
-  events: Event[],
+  events: Event[];
   options: {
-    weekStartsOn: number
-  }
+    weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  };
 };
 
 type State = {
-  currentMonth: Date,
-  selectedDate: Date
+  currentMonth: Date;
+  selectedDate: Date;
 };
 
 class Calendar extends React.Component<Props, State> {
@@ -67,11 +67,8 @@ class Calendar extends React.Component<Props, State> {
         <div className="calendar-prev" onClick={this.handlePrevMonth}>
           &lt; Previous
         </div>
-        <div
-          className="calendar-current"
-          onClick={() => this.handleSelectMonth(new Date())}
-        >
-          {formatDate(this.state.currentMonth, 'MMMM YYYY')}
+        <div className="calendar-current" onClick={() => this.handleSelectMonth(new Date())}>
+          {formatDate(this.state.currentMonth, 'MMMM yyyy')}
         </div>
         <div className="calendar-next" onClick={this.handleNextMonth}>
           Next &gt;
@@ -90,7 +87,7 @@ class Calendar extends React.Component<Props, State> {
     for (let i = 0; i < 7; i++) {
       days.push(
         <div className="calendar-day" key={i}>
-          {formatDate(addDays(weekStart, i), 'dddd')}
+          {formatDate(addDays(weekStart, i), 'EEEE')}
         </div>
       );
     }
@@ -132,16 +129,22 @@ class Calendar extends React.Component<Props, State> {
       dates.push(
         <div
           className={classes}
-          key={formatDate(date, 'x')}
+          key={formatDate(date, 'T')}
           onClick={() =>
-            isSameMonth(thisDate, this.state.currentMonth) &&
-            this.handleSelectDate(thisDate)
+            isSameMonth(thisDate, this.state.currentMonth) && this.handleSelectDate(thisDate)
           }
         >
-          <div className="calendar-cell__date">{formatDate(date, 'D')}</div>
+          <div className="calendar-cell__date">{formatDate(date, 'd')}</div>
           {this.props.events.map(event => {
             if (isSameDay(date, event.date)) {
-              return <div className="calendar-event">{event.name}</div>;
+              return (
+                <div
+                  key={`${event.name}-${formatDate(event.date, 'T')}`}
+                  className="calendar-event"
+                >
+                  {event.name}
+                </div>
+              );
             }
 
             return null;
