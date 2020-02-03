@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   addDays,
   addMonths,
@@ -26,60 +26,37 @@ type Props = {
   };
 };
 
-type State = {
-  currentMonth: Date;
-  selectedDate: Date;
-};
+const Calendar: React.FunctionComponent<Props> = props => {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-class Calendar extends React.Component<Props, State> {
-  state = {
-    currentMonth: new Date(),
-    selectedDate: new Date(),
+  const handlePrevMonth = () => {
+    setCurrentMonth(subMonths(currentMonth, 1));
   };
 
-  handleSelectDate = (date: Date) => {
-    this.setState({
-      selectedDate: date,
-    });
+  const handleNextMonth = () => {
+    setCurrentMonth(addMonths(currentMonth, 1));
   };
 
-  handleSelectMonth = (date: Date) => {
-    this.setState({
-      currentMonth: date,
-    });
-  };
-
-  handlePrevMonth = () => {
-    this.setState(state => ({
-      currentMonth: subMonths(state.currentMonth, 1),
-    }));
-  };
-
-  handleNextMonth = () => {
-    this.setState(state => ({
-      currentMonth: addMonths(state.currentMonth, 1),
-    }));
-  };
-
-  renderHeader() {
+  const renderHeader = () => {
     return (
       <div className="calendar-header">
-        <div className="calendar-prev" onClick={this.handlePrevMonth}>
+        <div className="calendar-prev" onClick={handlePrevMonth}>
           &lt; Previous
         </div>
-        <div className="calendar-current" onClick={() => this.handleSelectMonth(new Date())}>
-          {formatDate(this.state.currentMonth, 'MMMM yyyy')}
+        <div className="calendar-current" onClick={() => setCurrentMonth(new Date())}>
+          {formatDate(currentMonth, 'MMMM yyyy')}
         </div>
-        <div className="calendar-next" onClick={this.handleNextMonth}>
+        <div className="calendar-next" onClick={handleNextMonth}>
           Next &gt;
         </div>
       </div>
     );
-  }
+  };
 
-  renderDays() {
-    const { options } = this.props;
-    const weekStart = startOfWeek(this.state.currentMonth, {
+  const renderDays = () => {
+    const { options } = props;
+    const weekStart = startOfWeek(currentMonth, {
       weekStartsOn: options.weekStartsOn,
     });
     const days = [];
@@ -93,12 +70,12 @@ class Calendar extends React.Component<Props, State> {
     }
 
     return <div className="calendar-days">{days}</div>;
-  }
+  };
 
-  renderCells() {
-    const { options } = this.props;
-    const monthStart = startOfMonth(this.state.currentMonth);
-    const monthEnd = endOfMonth(this.state.currentMonth);
+  const renderCells = () => {
+    const { options } = props;
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
     const dateStart = startOfWeek(monthStart, {
       weekStartsOn: options.weekStartsOn,
     });
@@ -114,7 +91,7 @@ class Calendar extends React.Component<Props, State> {
 
       let classes = 'calendar-cell';
 
-      if (isSameDay(date, this.state.selectedDate)) {
+      if (isSameDay(date, selectedDate)) {
         classes += ' calendar-cell--selected';
       }
 
@@ -122,7 +99,7 @@ class Calendar extends React.Component<Props, State> {
         classes += ' calendar-cell--today';
       }
 
-      if (!isSameMonth(date, this.state.currentMonth)) {
+      if (!isSameMonth(date, currentMonth)) {
         classes += ' calendar-cell--disabled';
       }
 
@@ -130,12 +107,10 @@ class Calendar extends React.Component<Props, State> {
         <div
           className={classes}
           key={formatDate(date, 'T')}
-          onClick={() =>
-            isSameMonth(thisDate, this.state.currentMonth) && this.handleSelectDate(thisDate)
-          }
+          onClick={() => isSameMonth(thisDate, currentMonth) && setSelectedDate(thisDate)}
         >
           <div className="calendar-cell__date">{formatDate(date, 'd')}</div>
-          {this.props.events.map(event => {
+          {props.events.map(event => {
             if (isSameDay(date, event.date)) {
               return (
                 <div
@@ -156,17 +131,15 @@ class Calendar extends React.Component<Props, State> {
     }
 
     return <div className="calendar-cells">{dates}</div>;
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        {this.renderHeader()}
-        {this.renderDays()}
-        {this.renderCells()}
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      {renderHeader()}
+      {renderDays()}
+      {renderCells()}
+    </div>
+  );
+};
 
 export default Calendar;
