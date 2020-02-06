@@ -1,5 +1,5 @@
 import React from 'react';
-import Calendar from './Calendar';
+import Calendar from './calendar/Calendar';
 import { addDays, subDays } from 'date-fns';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
     { date: addDays(new Date(), 1), name: 'Wow calendar' },
   ];
 
-  return <Calendar options={{ weekStartsOn: 1 }} events={events} />;
+  return <Calendar events={events} />;
 }
 
 export default App;
