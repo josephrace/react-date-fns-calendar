@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { addMonths, subMonths } from 'date-fns';
+import React from 'react';
+import { CalendarProvider } from './CalendarContext';
 import CalendarHeader from './CalendarHeader';
 import CalendarDays from './CalendarDays';
 import CalendarCells from './CalendarCells';
@@ -17,31 +17,12 @@ export type CalendarProps = {
   weekStartsOn?: CalendarWeekStartsOn;
 };
 
-const Calendar: React.FunctionComponent<CalendarProps> = ({ events, weekStartsOn = 1 }) => {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-  const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-
-  return (
-    <>
-      <CalendarHeader
-        handleNextMonth={handleNextMonth}
-        handlePrevMonth={handlePrevMonth}
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-      />
-      <CalendarDays currentMonth={currentMonth} weekStartsOn={weekStartsOn} />
-      <CalendarCells
-        currentMonth={currentMonth}
-        events={events}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        weekStartsOn={weekStartsOn}
-      />
-    </>
-  );
-};
+const Calendar: React.FunctionComponent<CalendarProps> = ({ events, weekStartsOn = 1 }) => (
+  <CalendarProvider events={events} weekStartsOn={weekStartsOn}>
+    <CalendarHeader />
+    <CalendarDays />
+    <CalendarCells />
+  </CalendarProvider>
+);
 
 export default Calendar;

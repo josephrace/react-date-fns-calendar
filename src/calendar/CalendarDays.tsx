@@ -1,13 +1,12 @@
 import React from 'react';
 import { startOfWeek, format, addDays } from 'date-fns';
-import { CalendarWeekStartsOn } from './Calendar';
+import { useCalendar } from './CalendarContext';
 
-type Props = {
-  currentMonth: Date;
-  weekStartsOn: CalendarWeekStartsOn;
-};
+const CalendarDays: React.FunctionComponent = () => {
+  const { currentMonth, weekStartsOn } = useCalendar();
 
-const CalendarDays: React.FunctionComponent<Props> = ({ currentMonth, weekStartsOn }) => {
+  if (!currentMonth) return null;
+
   const weekStart = startOfWeek(currentMonth, {
     weekStartsOn,
   });

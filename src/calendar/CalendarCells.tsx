@@ -1,23 +1,13 @@
 import React from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays } from 'date-fns';
 import CalendarCell from './CalendarCell';
-import { CalendarEvent, CalendarWeekStartsOn } from './Calendar';
+import { useCalendar } from './CalendarContext';
 
-type Props = {
-  currentMonth: Date;
-  events: CalendarEvent[];
-  selectedDate: Date;
-  setSelectedDate: (date: Date) => void;
-  weekStartsOn: CalendarWeekStartsOn;
-};
+const CalendarCells: React.FunctionComponent = () => {
+  const { weekStartsOn, currentMonth } = useCalendar();
 
-const CalendarCells: React.FunctionComponent<Props> = ({
-  currentMonth,
-  events,
-  selectedDate,
-  setSelectedDate,
-  weekStartsOn,
-}) => {
+  if (!currentMonth) return null;
+
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const dateStart = startOfWeek(monthStart, {
@@ -31,16 +21,7 @@ const CalendarCells: React.FunctionComponent<Props> = ({
   let date = dateStart;
 
   while (date <= dateEnd) {
-    dates.push(
-      <CalendarCell
-        key={format(date, 'T')}
-        date={date}
-        events={events}
-        currentMonth={currentMonth}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-      />
-    );
+    dates.push(<CalendarCell key={format(date, 'T')} date={date} />);
 
     date = addDays(date, 1);
   }
