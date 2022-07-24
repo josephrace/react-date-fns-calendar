@@ -2,6 +2,7 @@ import React from 'react';
 import { addDays, format, addMonths, subMonths, getDaysInMonth, getDate } from 'date-fns';
 import { render } from '@testing-library/react';
 import Calendar, { CalendarProps } from './Calendar';
+import { act } from 'react-dom/test-utils';
 
 const getProps = (overrides: Partial<CalendarProps> = {}): CalendarProps => ({
   events: [
@@ -36,9 +37,12 @@ describe('Calendar', () => {
     it('adds a month when clicking next', () => {
       const nextMonthAndYear = format(addMonths(new Date(), 1), 'MMMM yyyy');
       const props = getProps();
-      const { getByTestId } = render(<Calendar {...props} />);
+      const { getByTestId, debug } = render(<Calendar {...props} />);
 
-      getByTestId('calendar-header-next').click();
+      act(() => {
+        getByTestId('calendar-header-next').click();
+      });
+
       expect(getByTestId('calendar-header-current').textContent).toEqual(nextMonthAndYear);
     });
 
@@ -47,7 +51,10 @@ describe('Calendar', () => {
       const props = getProps();
       const { getByTestId } = render(<Calendar {...props} />);
 
-      getByTestId('calendar-header-prev').click();
+      act(() => {
+        getByTestId('calendar-header-prev').click();
+      });
+
       expect(getByTestId('calendar-header-current').textContent).toEqual(prevMonthAndYear);
     });
   });
@@ -101,11 +108,15 @@ describe('Calendar', () => {
 
       expect(activeCells[1].classList.contains('calendar-cell--selected')).toBe(false);
 
-      activeCells[1].click();
+      act(() => {
+        activeCells[1].click();
+      });
 
       expect(activeCells[1].classList.contains('calendar-cell--selected')).toBe(true);
 
-      activeCells[2].click();
+      act(() => {
+        activeCells[2].click();
+      });
 
       expect(activeCells[1].classList.contains('calendar-cell--selected')).toBe(false);
       expect(activeCells[2].classList.contains('calendar-cell--selected')).toBe(true);

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { addMonths, subMonths } from 'date-fns';
 import { CalendarEvent, CalendarWeekStartsOn } from './Calendar';
 
-type CalendarContext = {
+type CalendarContextType = {
   events: CalendarEvent[];
   weekStartsOn: CalendarWeekStartsOn;
   currentMonth: Date;
@@ -13,7 +13,7 @@ type CalendarContext = {
   nextMonth: () => void;
 };
 
-const CalendarContext = React.createContext<Partial<CalendarContext>>({});
+const CalendarContext = React.createContext<Partial<CalendarContextType>>({});
 
 export const useCalendar = () => useContext(CalendarContext);
 
